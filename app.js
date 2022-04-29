@@ -43,11 +43,13 @@ const clearGrid = () => {
 }
 
 const createWinBox = () => {
+  const winTopElement = document.createElement('div')
+  winTopElement.textContent = `You win!`
   const winScoreElement = document.createElement('div')
   winScoreElement.textContent = `Your score is ${score / 2}`
 
   const winElement = document.createElement('div')
-  winElement.textContent = `You win!`
+  winElement.appendChild(winTopElement)
   winElement.appendChild(winScoreElement)
   winElement.classList.add('win')
 
@@ -57,6 +59,10 @@ const createWinBox = () => {
 }
 
 const refreshPage = () => {
+  score = 0
+  fullResult = 0
+  pairedCards = []
+
   clearGrid()
   createGrid()
 }
@@ -66,14 +72,15 @@ const checkMatch = (cards, flipImage, isMatch = false) => {
     cards.forEach(card => {
       const choosenCard = document.querySelector(`[data-id="${card.i + 1}"]`)
       choosenCard.querySelector('img').setAttribute('src', flipImage)
-      console.log(score)
+
       if (isMatch) {
         fullResult++
+
         choosenCard.removeEventListener('click', flipCard)
+        choosenCard.style.pointerEvents = 'none'
       }
-      console.log(fullResult)
+
       if (fullResult === PLAY_CARDS.length) {
-        console.log('win')
         clearGrid()
         createWinBox()
       }
@@ -97,8 +104,6 @@ const flipCard = (i, name) => {
   }
 
   pairedCards.push({ i, name })
-
-  console.log(pairedCards, pairedCards.length === 2)
 
   if (pairedCards.length === 2 && pairedCards[0].name === pairedCards[1].name) {
     checkMatch(pairedCards, emptyCardImage, (isMatch = true))
